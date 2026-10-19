@@ -2,7 +2,7 @@
 title: Southern Crossing in a day and a bit
 author: Callum Mallett
 region: Tararua Range
-route: southern-crossing
+route: sk-valleys
 days: 2
 keywords: [cloud, tussock, Alpha]
 excerpt: We left Ōtaki Forks in drizzle and walked straight up into the cloud, then spent the afternoon running a spine of tussock with nothing either side but white, until Alpha rose out of it like a ship.
