@@ -1,0 +1,82 @@
+name: Submit a story
+description: Send a running or fastpacking trip report, written in Markdown, with its GPX track.
+title: "Story: "
+labels: ["submission"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for sending something in. Write the story in Markdown in the big box — drag photos straight into it.
+        **GPX:** GitHub won't accept a bare `.gpx` file, so zip it, or rename it to `.txt`, then drag it into the GPX box.
+  - type: input
+    id: title
+    attributes:
+      label: Story title
+      placeholder: Southern Crossing in a day and a bit
+    validations:
+      required: true
+  - type: input
+    id: author
+    attributes:
+      label: Your name
+      description: As you'd like it shown on the site.
+    validations:
+      required: true
+  - type: input
+    id: author_url
+    attributes:
+      label: Link for your name (optional)
+      placeholder: https://instagram.com/you
+  - type: input
+    id: date
+    attributes:
+      label: Date of the trip
+      placeholder: 2026-10-04
+    validations:
+      required: true
+  - type: input
+    id: region
+    attributes:
+      label: Region
+      placeholder: Tararua Range
+    validations:
+      required: true
+  - type: input
+    id: days
+    attributes:
+      label: Days (optional)
+      placeholder: "2"
+  - type: textarea
+    id: excerpt
+    attributes:
+      label: Excerpt
+      description: One or two sentences for the front page.
+    validations:
+      required: true
+  - type: input
+    id: keywords
+    attributes:
+      label: Keywords
+      description: Two or three words that appear in your excerpt, comma separated. They become links on the front page.
+      placeholder: cloud, tussock, Alpha
+  - type: textarea
+    id: story
+    attributes:
+      label: Story (Markdown)
+      description: Paragraphs separated by a blank line. `## Heading`, **bold**, *italic*, > quotes. Drag photos in here.
+    validations:
+      required: true
+  - type: textarea
+    id: gpx
+    attributes:
+      label: GPX track
+      description: Drag in your zipped GPX (or .gpx renamed to .txt), or paste a direct download link.
+    validations:
+      required: true
+  - type: checkboxes
+    id: consent
+    attributes:
+      label: Permission
+      options:
+        - label: The words and photos are mine (or I have permission), and I'm happy for them to be published here with credit.
+          required: true
