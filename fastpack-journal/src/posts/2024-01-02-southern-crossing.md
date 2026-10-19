@@ -1,5 +1,5 @@
 ---
-title: SK Valleys, a first big push!
+title: SK Valleys, trials and...
 author: Callum Mallett
 region: Tararua Range
 route: sk-valleys
