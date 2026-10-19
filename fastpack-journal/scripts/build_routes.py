@@ -40,6 +40,7 @@ R_EARTH = 6371008.8
 MAP_POINTS_TOLERANCE_M = 12      # Douglas-Peucker tolerance for the drawn line
 PROFILE_SAMPLES = 160            # points in the elevation profile
 SLAB_PX = 1400                   # long edge of a rendered terrain slab
+TERRAIN_ERRORS: dict[str, str] = {}
 
 
 # ---------------------------------------------------------------- GPX parsing
@@ -236,6 +237,7 @@ def render_terrain(slug, bbox, pts):
         from pyproj import Transformer
     except Exception as exc:  # noqa: BLE001
         print(f"  terrain: skipped ({exc.__class__.__name__}: {exc})")
+        TERRAIN_ERRORS[slug] = f"missing package: {exc}"
         return None
 
     tf = Transformer.from_crs("EPSG:4326", "EPSG:2193", always_xy=True)
@@ -247,6 +249,7 @@ def render_terrain(slug, bbox, pts):
         da = load_elevation(bbox=tuple(bbox), resolution=resolution)
     except Exception as exc:  # noqa: BLE001
         print(f"  terrain: LINZ load failed ({exc})")
+        TERRAIN_ERRORS[slug] = f"LINZ load failed: {exc.__class__.__name__}: {exc}"[:300]
         return None
     if hasattr(da, "data_vars"):  # Dataset -> first band
         da = da[list(da.data_vars)[0]]
@@ -254,6 +257,7 @@ def render_terrain(slug, bbox, pts):
     z = np.asarray(da.values, dtype="float64")
     if z.ndim != 2 or not np.isfinite(z).any():
         print("  terrain: no elevation returned")
+        TERRAIN_ERRORS[slug] = "no elevation returned"
         return None
     xs = np.asarray(da["x"].values)
     ys = np.asarray(da["y"].values)
@@ -320,6 +324,8 @@ def main():
             t = render_terrain(slug, bbox, line)
             if t:
                 rec["terrain"] = t
+            elif slug in TERRAIN_ERRORS:
+                rec["terrain_error"] = TERRAIN_ERRORS[slug]
         routes[slug] = rec
         print(f"  {rec['distance_km']} km, +{rec['ascent_m']} m, {len(line)} pts")
 

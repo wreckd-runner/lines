@@ -61,6 +61,16 @@ export default function (eleventyConfig) {
     }
     return out;
   });
+  // /build.json — which routes got real LiDAR terrain, and why not if they didn't
+  eleventyConfig.addFilter("buildStatus", (routes) => ({
+    built: new Date().toISOString(),
+    routes: Object.values(routes || {}).map((r) => ({
+      slug: r.slug,
+      lidar: !!(r.terrain && r.terrain.src),
+      size: r.terrain ? `${r.terrain.w}x${r.terrain.h}` : null,
+      error: r.terrain_error || null,
+    })),
+  }));
   eleventyConfig.addFilter("routeFor", (routes, slug) => (slug && routes[slug]) || null);
   eleventyConfig.addFilter("json", (v) => JSON.stringify(v ?? null).replace(/</g, "\\u003c"));
   eleventyConfig.addFilter("num", (n) => (n == null ? "—" : Number(n).toLocaleString("en-NZ")));
