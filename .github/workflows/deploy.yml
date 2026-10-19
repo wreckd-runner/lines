@@ -1,0 +1,74 @@
+name: Build and deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: fastpack-journal   # the site lives in this folder
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # Rendered LiDAR slabs are cached; a slab is only redrawn when its GPX changes.
+      - uses: actions/cache@v4
+        with:
+          path: |
+            fastpack-journal/src/assets/terrain
+            fastpack-journal/src/_data/routes.json
+          key: terrain-${{ hashFiles('fastpack-journal/routes/*.gpx') }}
+          restore-keys: terrain-
+
+      - name: Install route + terrain tools
+        run: pip install -r requirements.txt
+
+      - name: Build routes and LiDAR terrain
+        # If LINZ is unreachable the site still builds; the browser draws relief instead.
+        run: python scripts/build_routes.py --terrain || python scripts/build_routes.py
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: fastpack-journal/package-lock.json
+
+      - run: npm ci
+
+      - uses: actions/configure-pages@v5
+        id: pages
+
+      - name: Build site
+        run: npx @11ty/eleventy
+        env:
+          PATH_PREFIX: ${{ steps.pages.outputs.base_path }}/
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: fastpack-journal/_site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
