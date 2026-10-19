@@ -10,9 +10,11 @@ permissions:
   pages: write
   id-token: write
 
+# Let a build that's under way finish (rendering terrain for a new route can take a
+# few minutes); a newer push waits its turn instead of cancelling it.
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   build:
