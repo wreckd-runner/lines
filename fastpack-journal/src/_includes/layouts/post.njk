@@ -31,7 +31,7 @@ script: post.js
     <figure class="story__map">
       <div class="slab slab--hero" id="hero-slab" aria-label="Route map of {{ title }}"></div>
       <figcaption>
-        <a href="{{ ('/routes/' + route + '.gpx') | url }}" download>Download GPX</a>
+        <a href="{{ ('/routes/' + (r.file or (route + '.gpx'))) | url }}" download>Download GPX</a>
         <span>Drag to tilt</span>
       </figcaption>
     </figure>

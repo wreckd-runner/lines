@@ -16,7 +16,7 @@ permalink: /routes/
     {%- if r %}
     <li class="tile">
       <a href="{{ post.url | url }}">
-        <div class="slab slab--flat" data-route="{{ post.data.route }}"></div>
+        <div class="slab slab--flat" data-route="{{ post.data.route | routeKey }}"></div>
         <span class="tile__title">{{ post.data.title }}</span>
         <span class="tile__meta">{{ r.distance_km }} km{% if r.ascent_m %} · +{{ r.ascent_m | num }} m{% endif %}{% if post.data.region %} · {{ post.data.region }}{% endif %}</span>
       </a>

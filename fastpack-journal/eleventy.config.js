@@ -51,10 +51,13 @@ export default function (eleventyConfig) {
   });
 
   // Only the route data a page actually needs gets inlined.
+  // Route names match GPX filenames regardless of capitals/spaces
+  const routeKey = (s) => String(s || "").trim().toLowerCase().replace(/\.gpx$/, "").replace(/\s+/g, "-");
+
   eleventyConfig.addFilter("pickRoutes", (routes, posts) => {
     const out = {};
     for (const p of posts || []) {
-      const slug = p.data.route;
+      const slug = routeKey(p.data.route);
       if (slug && routes[slug]) {
         out[slug] = { ...routes[slug], title: p.data.title, url: p.url, profile: undefined };
       }
@@ -71,7 +74,8 @@ export default function (eleventyConfig) {
       error: r.terrain_error || null,
     })),
   }));
-  eleventyConfig.addFilter("routeFor", (routes, slug) => (slug && routes[slug]) || null);
+  eleventyConfig.addFilter("routeFor", (routes, slug) => (slug && routes[routeKey(slug)]) || null);
+  eleventyConfig.addFilter("routeKey", routeKey);
   eleventyConfig.addFilter("json", (v) => JSON.stringify(v ?? null).replace(/</g, "\\u003c"));
   eleventyConfig.addFilter("num", (n) => (n == null ? "—" : Number(n).toLocaleString("en-NZ")));
 

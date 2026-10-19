@@ -15,7 +15,7 @@ permalink: /stories/
     {%- set r = routes | routeFor(post.data.route) %}
     {%- set y = post.date | year %}
     {%- if loop.first or (y != (collections.posts[loop.index0 - 1].date | year)) %}<li class="rows__year">{{ y }}</li>{% endif %}
-    <li class="row" data-route="{{ post.data.route }}">
+    <li class="row" data-route="{{ post.data.route | routeKey }}">
       <a href="{{ post.url | url }}">
         <time class="row__date">{{ post.date | dateShort }}</time>
         <span class="row__title">{{ post.data.title }}</span>

@@ -309,6 +309,7 @@ def main():
         bbox = padded_bbox(pts)
         rec = {
             "slug": slug,
+            "file": path.name,  # original filename, for the download link
             "hash": digest,
             "bbox": bbox,
             "start": [round(pts[0][0], 5), round(pts[0][1], 5)],
