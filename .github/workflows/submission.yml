@@ -1,0 +1,64 @@
+name: Submission to pull request
+
+# An editor adds the "approved" label to a submission issue; this turns it into
+# a post + GPX on a new branch and opens a pull request to review and merge.
+on:
+  issues:
+    types: [labeled]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  convert:
+    if: github.event.label.name == 'approved' && contains(github.event.issue.labels.*.name, 'submission')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install defusedxml
+
+      - name: Convert issue to post
+        id: convert
+        env:
+          # passed as env vars, never interpolated into the script
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_USER: ${{ github.event.issue.user.login }}
+        run: python fastpack-journal/scripts/issue_to_post.py
+
+      - uses: peter-evans/create-pull-request@v7
+        id: pr
+        with:
+          branch: submission/issue-${{ github.event.issue.number }}
+          commit-message: "Add story from #${{ github.event.issue.number }}"
+          title: "Story: ${{ steps.convert.outputs.title }}"
+          body: |
+            Converted from #${{ github.event.issue.number }} by @${{ github.event.issue.user.login }}.
+
+            Check the post in `fastpack-journal/src/posts/` and the track in `fastpack-journal/routes/`, edit anything you like on this branch, then merge to publish.
+
+            Closes #${{ github.event.issue.number }}
+          labels: submission
+
+      - name: Let the author know
+        if: steps.pr.outputs.pull-request-number
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh issue comment ${{ github.event.issue.number }} --repo ${{ github.repository }} \
+            --body "Thanks! Your story is ready for a final read in #${{ steps.pr.outputs.pull-request-number }} and will go live once it's merged."
+
+      - name: Report a problem
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh issue comment ${{ github.event.issue.number }} --repo ${{ github.repository }} \
+            --body "Couldn't turn this into a post automatically — usually the GPX attachment. Check the workflow log, or add the files by hand."
