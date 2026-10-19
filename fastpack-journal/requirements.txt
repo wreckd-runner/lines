@@ -1,0 +1,5 @@
+defusedxml>=0.7
+numpy>=1.26
+Pillow>=10
+pyproj>=3.6
+linz-stac-utils>=0.1

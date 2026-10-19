@@ -1,0 +1,15 @@
+{
+  "title": "Fastpack Journal",
+  "tagline": "Running and fastpacking stories from the ranges of Aotearoa",
+  "url": "https://YOUR-USERNAME.github.io/YOUR-REPO",
+  "repo": "YOUR-USERNAME/YOUR-REPO",
+  "branch": "main",
+  "home_coords": [-41.2865, 174.7762],
+  "front_slabs": 5,
+  "nav": [
+    { "label": "Stories", "href": "/stories/" },
+    { "label": "Routes", "href": "/routes/" },
+    { "label": "Submit", "href": "/submit/" },
+    { "label": "About", "href": "/about/" }
+  ]
+}

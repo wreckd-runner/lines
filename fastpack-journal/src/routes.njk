@@ -1,0 +1,28 @@
+---
+layout: layouts/base.njk
+title: Routes
+bodyClass: index
+script: grid.js
+permalink: /routes/
+---
+<main id="main" class="list">
+  <header class="list__head">
+    <h1>Routes</h1>
+    <p>Every line we’ve run, laid over the ground it crosses. Each one opens its story; each GPX is free to download.</p>
+  </header>
+  <ul class="grid">
+  {%- for post in collections.posts %}
+    {%- set r = routes | routeFor(post.data.route) %}
+    {%- if r %}
+    <li class="tile">
+      <a href="{{ post.url | url }}">
+        <div class="slab slab--flat" data-route="{{ post.data.route }}"></div>
+        <span class="tile__title">{{ post.data.title }}</span>
+        <span class="tile__meta">{{ r.distance_km }} km{% if r.ascent_m %} · +{{ r.ascent_m | num }} m{% endif %}{% if post.data.region %} · {{ post.data.region }}{% endif %}</span>
+      </a>
+    </li>
+    {%- endif %}
+  {%- endfor %}
+  </ul>
+</main>
+<script>window.ROUTES = {{ routes | pickRoutes(collections.posts) | json | safe }};</script>

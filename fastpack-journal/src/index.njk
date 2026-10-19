@@ -1,0 +1,28 @@
+---
+layout: layouts/base.njk
+bodyClass: home
+script: front.js
+---
+{%- set posts = collections.posts -%}
+<main id="main" class="field">
+  <h1 class="visually-hidden">{{ site.title }}</h1>
+  <p class="field__text">
+    {%- for post in posts %}
+    {%- set r = routes | routeFor(post.data.route) %}
+    <span class="entry" data-route="{{ post.data.route }}" style="--i:{{ loop.index0 }}">
+      <a class="entry__title" href="{{ post.url | url }}">{{ post.data.title }}</a>
+      <span class="entry__excerpt">{{ post | autoExcerpt | linkKeywords(post.data.keywords, post.url | url) | safe }}</span>
+      <span class="entry__meta">{% if r %}{{ r.start | coords | safe }}&ensp;·&ensp;{{ r.distance_km }}&nbsp;km{% if r.ascent_m %}&ensp;+{{ r.ascent_m | num }}&nbsp;m{% endif %}{% else %}{{ post.date | dateShort }}{% endif %}</span>
+    </span>
+    {%- endfor %}
+  </p>
+  <p class="field__more"><a href="{{ '/stories/' | url }}">All stories →</a>&emsp;<a href="{{ '/submit/' | url }}">Send us yours →</a></p>
+</main>
+
+<div class="stage" id="stage" aria-hidden="true"></div>
+<svg class="leader" id="leader" aria-hidden="true"><path /></svg>
+
+<script>
+  window.ROUTES = {{ routes | pickRoutes(posts) | json | safe }};
+  window.FRONT_SLABS = {{ site.front_slabs | json | safe }};
+</script>

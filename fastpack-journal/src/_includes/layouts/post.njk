@@ -1,0 +1,61 @@
+---
+layout: layouts/base.njk
+bodyClass: post
+script: post.js
+---
+{%- set r = routes | routeFor(route) -%}
+<main id="main" class="story">
+  <header class="story__head">
+    <div class="story__intro">
+      <p class="story__kicker">
+        <time datetime="{{ page.date | isoDate }}">{{ page.date | dateShort }}</time>
+        {% if region %}&ensp;·&ensp;{{ region }}{% endif %}
+      </p>
+      <h1 class="story__title">{{ title }}</h1>
+      <p class="story__by">
+        {% if author %}by {% if author_url %}<a href="{{ author_url }}">{{ author }}</a>{% else %}{{ author }}{% endif %}{% endif %}
+        {% if submitted %}<span class="tag">Reader story</span>{% endif %}
+        {% if sample %}<span class="tag tag--warn">Sample post — replace me</span>{% endif %}
+      </p>
+      {% if r %}
+      <dl class="stats">
+        <div><dt>Distance</dt><dd>{{ r.distance_km }}<small> km</small></dd></div>
+        {% if r.ascent_m %}<div><dt>Ascent</dt><dd>{{ r.ascent_m | num }}<small> m</small></dd></div>{% endif %}
+        {% if r.ele_max %}<div><dt>High point</dt><dd>{{ r.ele_max | num }}<small> m</small></dd></div>{% endif %}
+        {% if days %}<div><dt>Days</dt><dd>{{ days }}</dd></div>{% endif %}
+        <div class="stats__wide"><dt>Start</dt><dd class="mono">{{ r.start | coords | safe }}</dd></div>
+      </dl>
+      {% endif %}
+    </div>
+    {% if r %}
+    <figure class="story__map">
+      <div class="slab slab--hero" id="hero-slab" aria-label="Route map of {{ title }}"></div>
+      <figcaption>
+        <a href="{{ ('/routes/' + route + '.gpx') | url }}" download>Download GPX</a>
+        <span>Drag to tilt</span>
+      </figcaption>
+    </figure>
+    {% endif %}
+  </header>
+
+  {% if r and r.profile.length %}
+  <figure class="profile" id="profile" aria-label="Elevation profile">
+    <svg preserveAspectRatio="none"></svg>
+    <figcaption class="profile__readout" id="profile-readout">Elevation</figcaption>
+  </figure>
+  {% endif %}
+
+  <article class="prose">
+    {{ content | safe }}
+  </article>
+
+  <nav class="story__nav" aria-label="More stories">
+    {%- set prev = collections.posts | getPreviousCollectionItem(page) %}
+    {%- set next = collections.posts | getNextCollectionItem(page) %}
+    {% if prev %}<a href="{{ prev.url | url }}"><small>Newer</small>{{ prev.data.title }}</a>{% else %}<span></span>{% endif %}
+    {% if next %}<a href="{{ next.url | url }}" class="next"><small>Older</small>{{ next.data.title }}</a>{% endif %}
+  </nav>
+</main>
+{% if r %}
+<script>window.ROUTE = {{ r | json | safe }}; window.ROUTE.title = {{ title | json | safe }};</script>
+{% endif %}

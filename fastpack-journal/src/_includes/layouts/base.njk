@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en-NZ">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% if title and page.url != "/" %}{{ title }} — {% endif %}{{ site.title }}</title>
+  <meta name="description" content="{{ excerpt or site.tagline }}">
+  <meta name="theme-color" content="#e9e7e1">
+  <meta property="og:title" content="{{ title or site.title }}">
+  <meta property="og:description" content="{{ excerpt or site.tagline }}">
+  <link rel="alternate" type="application/atom+xml" title="{{ site.title }}" href="{{ '/feed.xml' | url }}">
+  <link rel="preload" href="{{ '/assets/fonts/instrument-serif-latin-400-normal.woff2' | url }}" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="{{ '/assets/css/style.css' | url }}">
+  <script>window.SITE_BASE = {{ ('/' | url) | json | safe }};</script>
+</head>
+<body class="{{ bodyClass }}">
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="bar" role="banner">
+    <a class="bar__home" href="{{ '/' | url }}">{{ site.title }}</a>
+    <span class="bar__coords" id="bar-coords" aria-hidden="true">{{ site.home_coords | coords | safe }}</span>
+    <button class="bar__toggle" aria-expanded="false" aria-controls="nav" type="button">Menu</button>
+    <nav class="bar__nav" id="nav" aria-label="Main">
+      {% for item in site.nav %}
+        <a href="{{ item.href | url }}"{% if page.url.startsWith(item.href) %} aria-current="page"{% endif %}>{{ item.label }}</a>
+      {% endfor %}
+    </nav>
+  </header>
+
+  {{ content | safe }}
+
+  <footer class="foot">
+    <span>© {{ site.title }}. Stories belong to their authors.</span>
+    <span>Relief from the <a href="https://www.linz.govt.nz/products-services/data/types-linz-data/elevation-data">LINZ national elevation model</a> (1&nbsp;m LiDAR DEM), CC&nbsp;BY&nbsp;4.0.</span>
+    <a href="{{ '/feed.xml' | url }}">RSS</a>
+  </footer>
+
+  <script src="{{ '/assets/js/terrain.js' | url }}"></script>
+  <script src="{{ '/assets/js/site.js' | url }}"></script>
+  {% if script %}<script src="{{ ('/assets/js/' + script) | url }}"></script>{% endif %}
+</body>
+</html>

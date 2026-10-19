@@ -1,0 +1,30 @@
+---
+layout: layouts/base.njk
+title: Stories
+bodyClass: index
+script: list.js
+permalink: /stories/
+---
+<main id="main" class="list">
+  <header class="list__head">
+    <h1>Stories</h1>
+    <p>{{ collections.posts.length }} trips, newest first. Hover a line to see the ground it crossed.</p>
+  </header>
+  <ol class="rows">
+  {%- for post in collections.posts %}
+    {%- set r = routes | routeFor(post.data.route) %}
+    {%- set y = post.date | year %}
+    {%- if loop.first or (y != (collections.posts[loop.index0 - 1].date | year)) %}<li class="rows__year">{{ y }}</li>{% endif %}
+    <li class="row" data-route="{{ post.data.route }}">
+      <a href="{{ post.url | url }}">
+        <time class="row__date">{{ post.date | dateShort }}</time>
+        <span class="row__title">{{ post.data.title }}</span>
+        <span class="row__region">{{ post.data.region }}</span>
+        <span class="row__km">{% if r %}{{ r.distance_km }} km{% endif %}</span>
+      </a>
+    </li>
+  {%- endfor %}
+  </ol>
+</main>
+<div class="peek" id="peek" aria-hidden="true"></div>
+<script>window.ROUTES = {{ routes | pickRoutes(collections.posts) | json | safe }};</script>
