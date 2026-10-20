@@ -146,6 +146,8 @@ img { max-width: 100%; height: auto; }
   background: var(--slab);
   outline: 1px solid rgba(255, 255, 255, .06); outline-offset: -1px;
 }
+.slab__ground { position: relative; transform: translateZ(0); transition: transform .9s var(--ease), clip-path .9s var(--ease); }
+.slab__ground .slab__ghost { position: absolute; inset: 0; }
 .slab__shade {
   position: absolute; inset: 6% 4% -4%;
   background: radial-gradient(closest-side, rgba(0,0,0,.42), rgba(0,0,0,0));
@@ -344,3 +346,14 @@ img { max-width: 100%; height: auto; }
   *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
   .slab__route .line { stroke-dashoffset: 0; }
 }
+
+/* ---- front page: cropped terrain sits well below the line, which runs past its edges */
+.slab--cropped .slab__terrain { outline: 0; }
+.slab--cropped .slab__ground { transform: translateZ(-40px); }
+.slab--cropped .slab__route { transform: translateZ(60px); }
+.slab--cropped.is-on .slab__route { transform: translateZ(110px); }
+.slab--cropped .slab__ghost path { stroke: rgba(255, 74, 28, .35); }
+/* only the visible terrain and the line itself catch the pointer, so text in the gaps stays hoverable */
+.stage .slab--cropped { pointer-events: none; }
+.stage .slab--cropped .slab__ground { pointer-events: auto; cursor: pointer; }
+.stage .slab--cropped .slab__route .hit { pointer-events: stroke; }

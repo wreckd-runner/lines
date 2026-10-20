@@ -183,12 +183,16 @@
     body.className = "slab__body";
     const shade = document.createElement("div");
     shade.className = "slab__shade";
+    // the "ground": terrain plus the line's shadow on it — can be cropped
+    const ground = document.createElement("div");
+    ground.className = "slab__ground";
     const canvas = document.createElement("canvas");
     canvas.className = "slab__terrain";
     canvas.width = W; canvas.height = H;
     canvas.getContext("2d").fillStyle = "#070707";
     canvas.getContext("2d").fillRect(0, 0, W, H);
-    body.append(shade, canvas);
+    ground.append(canvas);
+    body.append(shade, ground);
 
     const d = "M" + xy.map(([x, y]) => `${(x * W).toFixed(1)},${(y * H).toFixed(1)}`).join("L");
     const ghost = svg("svg", { class: "slab__ghost", viewBox: `0 0 ${W} ${H}`, preserveAspectRatio: "none" });
@@ -202,7 +206,8 @@
     if (!loop) svg("circle", { cx: ex * W, cy: ey * H, r: 4.5, class: "end", "vector-effect": "non-scaling-stroke" }, top);
     svg("circle", { cx: sx * W, cy: sy * H, r: 6, class: "start" }, top);
     const cur = svg("circle", { cx: sx * W, cy: sy * H, r: 7, class: "cursor" }, top);
-    body.append(ghost, top);
+    ground.append(ghost);
+    body.append(top);
 
     if (opts.label !== false && route.title) {
       const lab = document.createElement("span");
@@ -233,6 +238,19 @@
       const p = pointAt(t);
       cur.setAttribute("cx", p.x); cur.setAttribute("cy", p.y);
       cur.style.opacity = 1;
+    }
+    // opts.crop: show only a random window of the terrain; the line runs on past its edges
+    if (opts.crop) {
+      const rnd = Math.random;
+      const cw = 0.42 + rnd() * 0.3, ch = 0.42 + rnd() * 0.3;
+      const c = pointAt(0.15 + rnd() * 0.7); // centre the window somewhere on the route
+      const cx = c.x / W + (rnd() - 0.5) * 0.2, cy = c.y / H + (rnd() - 0.5) * 0.2;
+      const l = Math.min(Math.max(cx - cw / 2, 0), 1 - cw), t = Math.min(Math.max(cy - ch / 2, 0), 1 - ch);
+      const r = 1 - l - cw, b = 1 - t - ch;
+      const pct = (v) => (v * 100).toFixed(2) + "%";
+      ground.style.clipPath = `inset(${pct(t)} ${pct(r)} ${pct(b)} ${pct(l)})`;
+      Object.assign(shade.style, { left: pct(l), top: pct(t + ch * 0.06), right: pct(r), bottom: pct(b - ch * 0.04) });
+      el.classList.add("slab--cropped");
     }
     return { el, W, H, start: top.querySelector(".start"), pointAt, cursor };
   }

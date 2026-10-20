@@ -68,7 +68,7 @@
 
   function mount(slot, slug) {
     const route = ROUTES[slug];
-    const view = Terrain.build({ ...route, slug });
+    const view = Terrain.build({ ...route, slug }, { crop: true });
     view.el.addEventListener("mouseenter", () => setFocus(slug));
     view.el.addEventListener("mouseleave", () => clearFocus());
     view.el.addEventListener("focus", () => setFocus(slug));

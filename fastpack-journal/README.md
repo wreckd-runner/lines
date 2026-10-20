@@ -1,4 +1,4 @@
-# Fastpack Journal
+# ESCARP.
 
 A running and fastpacking journal for GitHub Pages. Stories are Markdown, every story carries a GPX track, and the front page floats black LiDAR terrain in front of the excerpts with each route drawn above its relief. Click a line, a slab, a title or a keyword to open the story.
 
